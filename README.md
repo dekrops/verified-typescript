@@ -1,6 +1,49 @@
-# verified-typescript
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/dekrops/verified-typescript/main/docs/assets/wordmark-dark.svg">
+    <img src="https://raw.githubusercontent.com/dekrops/verified-typescript/main/docs/assets/wordmark-light.svg" alt="verified-typescript" width="400">
+  </picture>
+</h1>
 
-The TypeScript SDK for the [Work Verification Protocol](https://github.com/dekrops/wvp) (WVP).
+<p align="center">
+  <strong>The TypeScript SDK for verifiable agent work.</strong><br>
+  Produce a portable, signed account of what an agent did, and verify one
+  offline, without trusting the system that produced it.
+</p>
+
+<p align="center">
+  <a href="https://github.com/dekrops/verified-typescript/actions/workflows/ci.yml"><img src="https://github.com/dekrops/verified-typescript/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="https://www.npmjs.com/package/verified-typescript"><img src="https://img.shields.io/npm/v/verified-typescript?label=npm" alt="npm version"></a>
+  <a href="https://github.com/dekrops/verified-typescript/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="License: Apache-2.0"></a>
+  <a href="https://www.npmjs.com/package/verified-typescript"><img src="https://img.shields.io/badge/node-22%2B-3178c6" alt="Node.js 22+"></a>
+  <a href="https://github.com/dekrops/wvp"><img src="https://img.shields.io/badge/protocol-WVP%20draft-lightgrey" alt="Protocol: WVP, draft"></a>
+</p>
+
+```ts
+import { Verifier } from "verified-typescript";
+import { readPackage, readTrustRegistry } from "verified-typescript/node";
+
+const examples = "examples/standalone-verification";
+const verifier = new Verifier({ trust: readTrustRegistry(`${examples}/trust.json`) });
+const result = verifier.verify(readPackage(`${examples}/contradicted.json`));
+
+console.log(result.verificationStatus, result.decision); // complete CONTRADICTED
+console.log(result.sourceTruthfulness.status); // not_established
+result.requireSupported();
+// RequirementNotMet: the reproduced decision is CONTRADICTED, not SUPPORTED
+```
+
+> **Status: developer preview (0.1.0).** The
+> [Work Verification Protocol](https://github.com/dekrops/wvp) (WVP) is a
+> draft in every version. This SDK has not been security-audited, and its API
+> will change. Read
+> [what is and is not supported](docs/protocol-compatibility.md) before
+> relying on it.
+>
+> **Open source under the [Apache License 2.0](LICENSE).** On npm as
+> [`verified-typescript`](https://www.npmjs.com/package/verified-typescript).
+
+## What it is
 
 > What did this agent do, under which authority, with what evidence, according
 > to which contract, and can an independent party reproduce the result?
@@ -11,15 +54,6 @@ Verification is performed by the same Rust crates as the
 [`verified` CLI](https://github.com/dekrops/verified-cli) and the
 [Python SDK](https://github.com/dekrops/verified-python), compiled to
 WebAssembly; the TypeScript layer adds an API, not a second implementation.
-
-**Status: developer preview (0.1.0).** WVP is a draft in every
-version. This SDK has not been security-audited, and its API will change. Read
-[what is and is not supported](docs/protocol-compatibility.md) before relying
-on it.
-
-```text
-Any agent. Any runtime. Independently verifiable work.
-```
 
 ## Install
 

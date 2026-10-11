@@ -9,7 +9,7 @@ as the sole control for a consequential decision.
 
 ## Supported versions
 
-Only the latest revision of `main`. Nothing is published to npm yet.
+Only the latest release.
 
 ## Reporting a vulnerability
 

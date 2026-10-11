@@ -12,7 +12,7 @@ Verification is performed by the same Rust crates as the
 [Python SDK](https://github.com/dekrops/verified-python), compiled to
 WebAssembly; the TypeScript layer adds an API, not a second implementation.
 
-**Status: developer preview (0.1.0), not yet on npm.** WVP is a draft in every
+**Status: developer preview (0.1.0).** WVP is a draft in every
 version. This SDK has not been security-audited, and its API will change. Read
 [what is and is not supported](docs/protocol-compatibility.md) before relying
 on it.
@@ -23,9 +23,14 @@ Any agent. Any runtime. Independently verifiable work.
 
 ## Install
 
-The package is not published yet. From a checkout, with Node.js 22.18 or
-later, a Rust toolchain (1.99+, with the `wasm32-unknown-unknown` target) and
-`wasm-bindgen-cli` 0.2.129:
+```sh
+npm install verified-typescript
+```
+
+Node.js 22 or later. The WebAssembly module ships inside the package: there
+is nothing to compile and no install script. To work on the SDK, from a
+checkout with Node.js 22.18 or later, a Rust toolchain (1.99+, with the
+`wasm32-unknown-unknown` target) and `wasm-bindgen-cli` 0.2.129:
 
 ```sh
 git clone --recurse-submodules https://github.com/dekrops/verified-typescript
@@ -230,7 +235,7 @@ refused, never rounded. Write amounts as whole units of the contract's scale
 
 ## Examples
 
-All run offline with synthetic data, after `npm run build`:
+All run offline with synthetic data, from a checkout after `npm run build`:
 `node examples/<dir>/<script>.ts`.
 
 | Example | Shows |
@@ -251,7 +256,7 @@ statements, chains and admission; Work Contract Language 1; work-unit identity
 and nullifiers; issuing `wvp-0.2` packages; framework-independent
 instrumentation.
 
-Not here: an npm release; framework adapters; an asynchronous signer
+Not here: framework adapters; an asynchronous signer
 interface (`Signer.sign` is synchronous); a client for the hosted Verified
 platform (it has no stable service API to call yet); claim registration v1;
 statement chaining when *producing* evidence. Details and reasons are in the

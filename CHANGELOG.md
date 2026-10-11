@@ -6,7 +6,9 @@ aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-First developer preview. Not published to npm.
+## [0.1.0] - 2026-10-11
+
+First developer preview.
 
 ### Added
 

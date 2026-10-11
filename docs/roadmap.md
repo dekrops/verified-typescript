@@ -23,7 +23,7 @@ Working and tested:
   versions, the contract language, work-unit identity and evidence statements.
 - **One WebAssembly module** for every platform, with no runtime dependency.
 
-Known gaps at this horizon: not published to npm; no security review; no
+Known gaps at this horizon: no security review; no
 framework adapter; a synchronous-only signer; claim registration not bound;
 no platform client; only Node.js is tested; building from source needs Rust
 and network access.
@@ -32,8 +32,9 @@ and network access.
 
 In rough order of leverage:
 
-1. **Publish to npm** as `verified-typescript`, with provenance, once the
-   owner decides to.
+1. **Release from CI with provenance.** 0.1.0 was published to npm by hand,
+   to hold the name. Later versions should be published by a workflow, with
+   npm provenance, from a tagged commit.
 2. **An asynchronous signer.** `Signer.sign` is synchronous, which does not
    fit a key held in a KMS. An `AsyncSigner` with `await source.record(…)`
    and `await work.issue(…)` beside the synchronous forms.

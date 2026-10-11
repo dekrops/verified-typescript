@@ -135,6 +135,5 @@ and the build script refuses to run with any other.
   install it, there is no install script, and there is no per-platform
   artifact.
 - **Module format:** ES modules only.
-- **Not published.** Nothing has been uploaded to npm. The name
-  `verified-typescript` is the intended one; the bare name `verified` belongs
-  to an unrelated package.
+- **On npm** as `verified-typescript`. The bare name `verified` belongs to
+  an unrelated package. 0.1.0 was published by hand, without provenance.

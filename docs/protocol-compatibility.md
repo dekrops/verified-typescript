@@ -8,7 +8,7 @@ does not do.
 
 | | |
 | --- | --- |
-| SDK | `verified-typescript` 0.1.0, a developer preview. Not published to npm |
+| SDK | `verified-typescript` 0.1.0, a developer preview |
 | Verification crates | [`dekrops/verified-cli`](https://github.com/dekrops/verified-cli) `v0.1.1`, commit `0d18dfb11b1849e89ecfb05aa33cddf2fd2d172a`: `verified-canonical`, `verified-protocol`, `verified-contract`, `verified-verifier`, `verified-work-unit` |
 | Conformance corpus | [`dekrops/wvp`](https://github.com/dekrops/wvp) at `c7c9de2a7e8ad67e7dcee46d5c5f7fc2edccb797`, as the submodule `conformance/wvp` |
 | Binding | One WebAssembly module, built with `wasm-bindgen` 0.2.129 |

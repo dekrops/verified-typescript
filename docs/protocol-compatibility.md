@@ -9,8 +9,8 @@ does not do.
 | | |
 | --- | --- |
 | SDK | `verified-typescript` 0.1.0, a developer preview |
-| Verification crates | [`dekrops/verified-cli`](https://github.com/dekrops/verified-cli) `v0.1.1`, commit `0d18dfb11b1849e89ecfb05aa33cddf2fd2d172a`: `verified-canonical`, `verified-protocol`, `verified-contract`, `verified-verifier`, `verified-work-unit` |
-| Conformance corpus | [`dekrops/wvp`](https://github.com/dekrops/wvp) at `c7c9de2a7e8ad67e7dcee46d5c5f7fc2edccb797`, as the submodule `conformance/wvp` |
+| Verification crates | [`dekrops/verified-cli`](https://github.com/dekrops/verified-cli) `v0.1.3`, commit `519a2d200a05a6778f427cfeee14b5b7aafd277d`: `verified-history`, `verified-canonical`, `verified-protocol`, `verified-contract`, `verified-verifier`, `verified-work-unit` |
+| Conformance corpus | [`dekrops/wvp`](https://github.com/dekrops/wvp) at `46ccd1d7c34d3a92e13a59f9235120f8d37395d7`, as the submodule `conformance/wvp` |
 | Binding | One WebAssembly module, built with `wasm-bindgen` 0.2.129 |
 | Runtime | Node.js 22 or later |
 
@@ -31,6 +31,12 @@ does not do.
 Also, outside packages: evidence statements (sign, read, authenticate), Work
 Contract Language 1 (read, and evaluate through package assembly), work-unit
 identity v1 (identity, nullifier, key commitment).
+
+And, as a draft: work relation v1, reading only (`readHistory`). Given
+relations and the records they name, it reports each relation as checked,
+stated, contradicted or refused, whether a registered claim is a package's
+claim, and each stream's completeness. It verifies no record, and this SDK
+does not yet issue relations.
 
 Statement chains and admission are bound in the module and run against the
 corpus, but have no public TypeScript API yet.
@@ -56,7 +62,8 @@ read into a JavaScript `number` and written back.
 | `work-contract/v1`, 82 case files and 5 differential batches | 641 cases reproduced: 81 case files and 560 cases in the 5 batches. 1 case file cannot be represented (below) |
 | `work-unit/v1/vectors.json` | 3 of 3 key commitments and 10 of 10 identities and nullifiers |
 | `evidence-statement/v1`, 39 vectors | 39 reproduced: 17 statement, 13 chain, 9 admission. **Not compared:** `verificationResultSha256` and `verificationStatus` of accepted admissions, which are the platform's result and are not computed by the shared crates |
-| `claim-registration/v1` (123 cases) | **Not run.** Claim registration is not bound in this release (see below) |
+| `work-relation/v1/vectors.json`, 41 cases | 41 reproduced: the whole reading of each, as the shared reader states it |
+| `claim-registration/v1` (163 cases) | **Not run.** Claim registration is not bound in this release (see below) |
 
 `72-scale-not-whole` gives a type a fractional `scale`. `verified-json-v1` has
 no fractions, so the shared reader refuses the file's text before any contract

@@ -10,7 +10,7 @@ import { expect, test } from "vitest";
 import { buildInfo, VERSION } from "../../src/index.js";
 import { ROOT } from "../helpers.js";
 
-const CORPUS_PIN = "c7c9de2a7e8ad67e7dcee46d5c5f7fc2edccb797";
+const CORPUS_PIN = "46ccd1d7c34d3a92e13a59f9235120f8d37395d7";
 const cargo = readFileSync(join(ROOT, "rust", "Cargo.toml"), "utf8");
 
 test("one upstream revision is pinned everywhere", () => {
@@ -18,6 +18,7 @@ test("one upstream revision is pinned everywhere", () => {
   expect(dependencies.map((match) => match[1]).sort()).toEqual([
     "verified-canonical",
     "verified-contract",
+    "verified-history",
     "verified-protocol",
     "verified-verifier",
     "verified-work-unit",

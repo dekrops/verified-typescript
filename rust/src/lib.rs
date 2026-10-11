@@ -14,6 +14,7 @@
 //! refusals included, are returned as data.
 
 mod evidence;
+mod history;
 mod issue;
 mod json;
 mod report;
@@ -30,7 +31,7 @@ use crate::json::{digest, list, object, optional, read, text, texts};
 
 /// The revision of `dekrops/verified-cli` the verification crates are built
 /// from. Kept beside the pin in `Cargo.toml`; a test compares the two.
-const UPSTREAM_REVISION: &str = "0d18dfb11b1849e89ecfb05aa33cddf2fd2d172a";
+const UPSTREAM_REVISION: &str = "519a2d200a05a6778f427cfeee14b5b7aafd277d";
 
 /// The DER encoding of an Ed25519 `SubjectPublicKeyInfo` up to the key.
 const SPKI_PREFIX: [u8; 12] = [
@@ -257,6 +258,16 @@ pub fn payload_digest(body: &[u8]) -> Thrown<String> {
 pub fn check_statement(signed: &[u8], trust: Option<Vec<u8>>) -> Thrown<String> {
     let trust = trust.as_deref().map(report::trust).transpose()?;
     Ok(evidence::statement(signed, trust.as_ref()).to_canonical_string())
+}
+
+/// Reads work relations against the records given with them, under `trust`
+/// (work relation v1, a draft). Verifies no record.
+#[wasm_bindgen]
+pub fn read_history(relations: &[u8], records: &[u8], trust: &[u8]) -> Thrown<String> {
+    let trust = report::trust(trust)?;
+    let relations = read(relations, "relations", "MALFORMED_JSON")?;
+    let records = read(records, "records", "MALFORMED_JSON")?;
+    Ok(history::reading(&relations, &records, &trust)?.to_canonical_string())
 }
 
 /// Verifies that statements are consecutive steps of one issuer's stream.

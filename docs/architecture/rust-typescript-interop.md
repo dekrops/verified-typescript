@@ -110,7 +110,7 @@ file read, no fetch, no bundler plugin. The cost is size. The module is about
 ## Pinning and upgrades
 
 The six crates are git dependencies pinned to the commit of an upstream tag
-(`rust/Cargo.toml`, currently `v0.1.3`), locked in `rust/Cargo.lock`, built
+(`rust/Cargo.toml`, currently `v0.1.4`), locked in `rust/Cargo.lock`, built
 with `--locked`. Upstream's library API follows semantic versioning from its
 first tag, and asks consumers that exchange packages to pin the same tag.
 

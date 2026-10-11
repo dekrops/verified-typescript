@@ -31,7 +31,7 @@ use crate::json::{digest, list, object, optional, read, text, texts};
 
 /// The revision of `dekrops/verified-cli` the verification crates are built
 /// from. Kept beside the pin in `Cargo.toml`; a test compares the two.
-const UPSTREAM_REVISION: &str = "519a2d200a05a6778f427cfeee14b5b7aafd277d";
+const UPSTREAM_REVISION: &str = "4d41004eed165a2df65523f0d9753cbf050f306e";
 
 /// The DER encoding of an Ed25519 `SubjectPublicKeyInfo` up to the key.
 const SPKI_PREFIX: [u8; 12] = [
@@ -268,6 +268,29 @@ pub fn read_history(relations: &[u8], records: &[u8], trust: &[u8]) -> Thrown<St
     let relations = read(relations, "relations", "MALFORMED_JSON")?;
     let records = read(records, "records", "MALFORMED_JSON")?;
     Ok(history::reading(&relations, &records, &trust)?.to_canonical_string())
+}
+
+/// Lays out the statement by which a source says that records belong to one
+/// group (work relation v1, a draft). Returns `{ statement, body }`; the
+/// caller signs over the statement's signing input.
+#[wasm_bindgen]
+pub fn prepare_group_relation(
+    group: &str,
+    members: &[u8],
+    stated: &[u8],
+    stream: Option<String>,
+    after: Option<Vec<u8>>,
+) -> Thrown<String> {
+    let members = read(members, "members", "MALFORMED_JSON")?;
+    let stated = read(stated, "stated", "MALFORMED_JSON")?;
+    let after = after
+        .as_deref()
+        .map(|after| read(after, "after", "MALFORMED_JSON"))
+        .transpose()?;
+    Ok(
+        history::group(group, &members, &stated, stream.as_deref(), after.as_ref())?
+            .to_canonical_string(),
+    )
 }
 
 /// Verifies that statements are consecutive steps of one issuer's stream.

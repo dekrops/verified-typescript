@@ -42,6 +42,7 @@ export {
   EvidenceSource,
   type EvidenceSourceOptions,
   type FieldValue,
+  type GroupOptions,
   SignedEvidence,
   type StatementOptions,
   type Subject,
@@ -50,14 +51,17 @@ export {
   type CarriedRelation,
   type HistoryReading,
   type OfferedRecord,
+  packageReference,
   RecordKind,
   type RecordReference,
   type RelationRead,
   readHistory,
   type SameClaim,
+  type SignedRelation,
   Standing,
   StreamCompleteness,
   type StreamRead,
+  workRecordReference,
 } from "./history.js";
 export { WorkPackage, WorkRecord } from "./records.js";
 export {

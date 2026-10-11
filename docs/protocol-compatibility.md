@@ -9,7 +9,7 @@ does not do.
 | | |
 | --- | --- |
 | SDK | `verified-typescript` 0.1.0, a developer preview |
-| Verification crates | [`dekrops/verified-cli`](https://github.com/dekrops/verified-cli) `v0.1.3`, commit `519a2d200a05a6778f427cfeee14b5b7aafd277d`: `verified-history`, `verified-canonical`, `verified-protocol`, `verified-contract`, `verified-verifier`, `verified-work-unit` |
+| Verification crates | [`dekrops/verified-cli`](https://github.com/dekrops/verified-cli) `v0.1.4`, commit `4d41004eed165a2df65523f0d9753cbf050f306e`: `verified-history`, `verified-canonical`, `verified-protocol`, `verified-contract`, `verified-verifier`, `verified-work-unit` |
 | Conformance corpus | [`dekrops/wvp`](https://github.com/dekrops/wvp) at `46ccd1d7c34d3a92e13a59f9235120f8d37395d7`, as the submodule `conformance/wvp` |
 | Binding | One WebAssembly module, built with `wasm-bindgen` 0.2.129 |
 | Runtime | Node.js 22 or later |
@@ -35,8 +35,10 @@ identity v1 (identity, nullifier, key commitment).
 And, as a draft: work relation v1, reading only (`readHistory`). Given
 relations and the records they name, it reports each relation as checked,
 stated, contradicted or refused, whether a registered claim is a package's
-claim, and each stream's completeness. It verifies no record, and this SDK
-does not yet issue relations.
+claim, and each stream's completeness. It verifies no record. Of the three
+relations, this SDK issues one: `groups` (`EvidenceSource.group`), an
+application's statement that records belong together. `recorded` and
+`linked` are a ledger's to say.
 
 Statement chains and admission are bound in the module and run against the
 corpus, but have no public TypeScript API yet.

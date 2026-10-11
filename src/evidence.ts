@@ -22,6 +22,7 @@ import { call, callJson, decode, encode, type JsonObject } from "./bridge.js";
 import { utf8 } from "./bytes.js";
 import { Digest } from "./canonical.js";
 import { SigningAuthorityError } from "./errors.js";
+import type { RecordReference, SignedRelation } from "./history.js";
 import { encodeSignature, type Signer, type SigningAuthority } from "./signing.js";
 import { type Clock, epochSeconds, instant, now } from "./time.js";
 import { TrustRegistry } from "./trust.js";
@@ -257,6 +258,19 @@ export interface StatementOptions {
   evidenceId?: string | undefined;
 }
 
+/** What a group relation may state besides its name and members. */
+export interface GroupOptions {
+  /** Defaults to the source's clock. Asserted by the signer; not authenticated. */
+  observedAt?: Date | string | undefined;
+  observationId?: string | undefined;
+  /** The statement's identifier (a UUID). A random one by default. */
+  evidenceId?: string | undefined;
+  /** Starts a stream of this name with this relation. */
+  stream?: string | undefined;
+  /** Continues the stream of the relation signed before. */
+  after?: SignedRelation | undefined;
+}
+
 /** What a completeness statement may state. */
 export interface CompletenessOptions extends Omit<StatementOptions, "observedAt"> {
   /** The time the listing is complete as of: a `Date`, or seconds since 1970. */
@@ -365,6 +379,70 @@ export class EvidenceSource {
       options.evidenceKind ?? EvidenceKind.EVENT,
       options.observedAt ?? this.#clock(),
     );
+  }
+
+  /**
+   * Signs this source's statement that records belong to one group (work
+   * relation v1, a draft).
+   *
+   * `members` name packages or work records, in any order. What a group is,
+   * a session or a batch, is this source's to define. The statement says
+   * the members belong together. It does not say the group is complete,
+   * that its members are true, or that they agree.
+   *
+   * To let a reader see that no statement is missing, chain the relations
+   * in a stream of their own: start one with `stream` and continue it with
+   * `after`, the relation signed before. Nothing shows what follows the
+   * last one.
+   *
+   * The layout is the shared library's, which refuses a relation a reader
+   * would refuse; this method only supplies what the source states and
+   * signs.
+   */
+  group(
+    name: string,
+    members: readonly RecordReference[],
+    options: GroupOptions = {},
+  ): SignedRelation {
+    if (typeof name !== "string") {
+      throw new TypeError("a group's name is text");
+    }
+    const identifier =
+      options.evidenceId === undefined ? randomUuid() : uuid(options.evidenceId, "evidenceId");
+    const stated = encode(
+      {
+        id: { value: identifier },
+        issuer: { value: this.authority.issuer },
+        observedAt: { value: instant(options.observedAt ?? this.#clock()) },
+        source: {
+          system: this.system,
+          observationId: options.observationId ?? `${this.system}:${identifier}`,
+        },
+        tenant: { value: this.authority.tenant },
+      },
+      "stated",
+    );
+    const listed = encode(
+      members.map((member) => {
+        if (!(member?.digest instanceof Digest)) {
+          throw new TypeError("members are record references");
+        }
+        return { kind: member.kind, hex: member.digest.hex };
+      }),
+      "members",
+    );
+    const after =
+      options.after === undefined ? undefined : encode(options.after.statement, "after");
+    const prepared = callJson((native) =>
+      native.prepare_group_relation(name, listed, stated, options.stream, after),
+    );
+    const statement = prepared["statement"] as JsonObject;
+    const unsigned = encode(statement, "statement");
+    const message = call((native) => native.statement_signing_input(unsigned));
+    return {
+      statement: { statement, signature: encodeSignature(this.#signer, message) },
+      body: prepared["body"] as JsonObject,
+    };
   }
 
   /**

@@ -13,7 +13,8 @@
 // this file decides anything about a relation.
 
 import { callJson, encode, type JsonObject } from "./bridge.js";
-import { Digest, type DigestWire } from "./canonical.js";
+import { canonicalize, Digest, type DigestWire } from "./canonical.js";
+import { WorkRecord } from "./records.js";
 import { TrustRegistry } from "./trust.js";
 
 /** The kinds of record a relation can name. */
@@ -64,6 +65,34 @@ export type StreamCompleteness = (typeof StreamCompleteness)[keyof typeof Stream
 export interface RecordReference {
   readonly kind: string;
   readonly digest: Digest;
+}
+
+/** Names a package by its package commitment: one you hold, or the one a work record states. */
+export function packageReference(of: WorkRecord | Digest): RecordReference {
+  return {
+    kind: RecordKind.PACKAGE,
+    digest: of instanceof WorkRecord ? of.packageCommitment : of,
+  };
+}
+
+/** Names a work record by the digest of its canonical text. */
+export function workRecordReference(record: WorkRecord): RecordReference {
+  return { kind: RecordKind.WORK_RECORD, digest: Digest.ofBytes(canonicalize(record.toBytes())) };
+}
+
+/**
+ * A relation as it travels: the signed statement that carries it, and the
+ * body the statement commits to.
+ *
+ * It shows that its source said so. It does not show that what it says is
+ * true, and it counts for a relying party only if that party's registry
+ * trusts the signing key for the source.
+ */
+export interface SignedRelation {
+  /** The signed evidence statement: `{ statement, signature }`. */
+  readonly statement: JsonObject;
+  /** The relation body. */
+  readonly body: JsonObject;
 }
 
 /** A record text, offered as one kind. It is held only as that kind. */

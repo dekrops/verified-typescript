@@ -15,11 +15,16 @@ aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `STATED`, `CONTRADICTED` or `REFUSED`, and reading verifies no record. The
   rules are upstream's `verified-history` crate; the 41 cases of the
   published corpus are reproduced.
+- `EvidenceSource.group`: signs a source's statement that packages or work
+  records belong to one group (the `groups` relation), optionally chained in
+  a stream so that a reader can see none is missing. `packageReference` and
+  `workRecordReference` name the members. The statement is laid out by
+  upstream's producer, which refuses a relation a reader would refuse.
 
 ### Changed
 
-- The WebAssembly module is built on `dekrops/verified-cli` `v0.1.3`
-  (`519a2d2`), and the conformance corpus is `dekrops/wvp` at `46ccd1d`.
+- The WebAssembly module is built on `dekrops/verified-cli` `v0.1.4`
+  (`4d41004`), and the conformance corpus is `dekrops/wvp` at `46ccd1d`.
   Both upstream releases since `v0.1.1` only added to the library API;
   nothing bound before changes.
 

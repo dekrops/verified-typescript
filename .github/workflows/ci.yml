@@ -49,6 +49,8 @@ jobs:
       # The package carries these texts. The file is generated, offline, from
       # the crates rust/Cargo.lock names; a change of dependencies
       # regenerates it in the same pull request.
+      - run: cargo fetch --locked
+        working-directory: rust
       - run: cargo about generate --frozen --fail about.hbs -o "$RUNNER_TEMP/notices.md"
         working-directory: rust
       - name: The committed third-party notices are current

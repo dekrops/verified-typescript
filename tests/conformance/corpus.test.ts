@@ -15,6 +15,7 @@ import {
   Digest,
   type DigestWire,
   MalformedInputError,
+  readHistory,
   TrustRegistry,
   UnsupportedOperationError,
   type VerificationResult,
@@ -332,6 +333,33 @@ describe.skipIf(CORPUS === undefined)("the WVP conformance corpus", () => {
     const kinds = statementVectors.map((path) => (load(path) as Vector).kind);
     const count = (kind: string): number => kinds.filter((item) => item === kind).length;
     expect([count("statement"), count("chain"), count("admission")]).toEqual([17, 13, 9]);
+  });
+
+  // --- work relation v1 (draft) ----------------------------------------------
+
+  const relationCases: Vector[] = (
+    load(join(corpus, "work-relation", "v1", "vectors.json")) as Vector
+  ).cases;
+
+  test.each(relationCases.map((item) => [item.name as string, item]))(
+    "work relation %s",
+    (_name, item) => {
+      const trust = TrustRegistry.fromJson(bytes(JSON.stringify(item.trust)));
+      const reading = readHistory(item.relations, item.records, trust);
+      // The whole reading: every record, every relation's standing, every
+      // derived relation and every stream.
+      expect(plain(reading.raw)).toEqual(item.expected);
+      // And the typed view says what the reading says.
+      expect(reading.relations.map((read) => read.standing)).toEqual(
+        item.expected.relations.map((read: Vector) => read.standing),
+      );
+      expect(reading.records).toHaveLength(item.records.length);
+      expect(reading.recordsVerified).toBe(false);
+    },
+  );
+
+  test("the work relation corpus is the published size", () => {
+    expect(relationCases).toHaveLength(41);
   });
 });
 

@@ -6,6 +6,23 @@ aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `readHistory`: reads work relations (work relation v1, a draft) against
+  the records given with them, under your trust registry. A relation is a
+  signed statement by which a ledger or an application says how the records
+  of one unit of work are related. Each relation is reported as `CHECKED`,
+  `STATED`, `CONTRADICTED` or `REFUSED`, and reading verifies no record. The
+  rules are upstream's `verified-history` crate; the 41 cases of the
+  published corpus are reproduced.
+
+### Changed
+
+- The WebAssembly module is built on `dekrops/verified-cli` `v0.1.3`
+  (`519a2d2`), and the conformance corpus is `dekrops/wvp` at `46ccd1d`.
+  Both upstream releases since `v0.1.1` only added to the library API;
+  nothing bound before changes.
+
 ### Fixed
 
 - The package now carries `THIRD-PARTY-LICENSES.md`: the licenses and notices

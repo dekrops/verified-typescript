@@ -46,6 +46,19 @@ export {
   type StatementOptions,
   type Subject,
 } from "./evidence.js";
+export {
+  type CarriedRelation,
+  type HistoryReading,
+  type OfferedRecord,
+  RecordKind,
+  type RecordReference,
+  type RelationRead,
+  readHistory,
+  type SameClaim,
+  Standing,
+  StreamCompleteness,
+  type StreamRead,
+} from "./history.js";
 export { WorkPackage, WorkRecord } from "./records.js";
 export {
   DECISION_SOURCE,

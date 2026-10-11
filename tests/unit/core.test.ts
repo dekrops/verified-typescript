@@ -343,7 +343,9 @@ describe("the core entry point", () => {
   test("imports nothing but its own files", () => {
     const graph = reachable(join(ROOT, "src", "index.ts"));
     // The whole core is in the graph, generated glue included.
-    const files = [...graph.keys()].map((file) => file.slice(join(ROOT, "src").length + 1));
+    const files = [...graph.keys()].map((file) =>
+      file.slice(join(ROOT, "src").length + 1).replaceAll("\\", "/"),
+    );
     expect(files).toEqual(
       expect.arrayContaining([
         "index.ts",

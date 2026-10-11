@@ -4,7 +4,7 @@
 // checked-in fixtures are current. These run the built package, as a user
 // would: `npm test` builds it first.
 
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeAll, describe, expect, test } from "vitest";
@@ -66,7 +66,7 @@ describe("the examples", () => {
   test("the README's examples run as written", () => {
     const readme = readFileSync(join(ROOT, "README.md"), "utf8");
     const blocks = [...readme.matchAll(/```ts\r?\n(.*?)```/gs)].map((match) => match[1] as string);
-    expect(blocks).toHaveLength(4);
+    expect(blocks).toHaveLength(5);
     const scratch = join(ROOT, ".readme-check");
     rmSync(scratch, { recursive: true, force: true });
     mkdirSync(scratch);
@@ -74,6 +74,17 @@ describe("the examples", () => {
       blocks.forEach((block, index) => {
         const path = join(scratch, `block-${index + 1}.ts`);
         writeFileSync(path, block);
+        if (index === 0) {
+          // The header's block ends by enforcing an outcome the package does
+          // not have: it prints two lines, then throws what its comment says.
+          const done = spawnSync(process.execPath, [path], { cwd: ROOT, encoding: "utf8" });
+          expect(done.stdout).toBe("complete CONTRADICTED\nnot_established\n");
+          expect(done.status).not.toBe(0);
+          expect(done.stderr).toContain(
+            "RequirementNotMet: the reproduced decision is CONTRADICTED, not SUPPORTED",
+          );
+          return;
+        }
         expect(run(path).trim(), `README block ${index + 1}`).not.toBe("");
       });
     } finally {

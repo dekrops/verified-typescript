@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: Apache-2.0
+
+[package]
+name = "verified-typescript-native"
+description = "WebAssembly bindings to the public Work Verification Protocol crates of dekrops/verified-cli."
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+repository = "https://github.com/dekrops/verified-typescript"
+license = "Apache-2.0"
+# Distributed only inside the verified-typescript package.
+publish = false
+
+[lib]
+name = "verified_native"
+crate-type = ["cdylib"]
+
+# The verification crates are pinned to the commit of a tag of
+# dekrops/verified-cli (v0.1.1), the tag the Python SDK pins too. They are
+# not on crates.io. Change all five together, with the result tables in
+# docs/protocol-compatibility.md, in one pull request.
+[dependencies]
+verified-canonical = { git = "https://github.com/dekrops/verified-cli", rev = "0d18dfb11b1849e89ecfb05aa33cddf2fd2d172a", version = "0.1.1" }
+verified-contract = { git = "https://github.com/dekrops/verified-cli", rev = "0d18dfb11b1849e89ecfb05aa33cddf2fd2d172a", version = "0.1.1" }
+verified-protocol = { git = "https://github.com/dekrops/verified-cli", rev = "0d18dfb11b1849e89ecfb05aa33cddf2fd2d172a", version = "0.1.1" }
+verified-verifier = { git = "https://github.com/dekrops/verified-cli", rev = "0d18dfb11b1849e89ecfb05aa33cddf2fd2d172a", version = "0.1.1" }
+verified-work-unit = { git = "https://github.com/dekrops/verified-cli", rev = "0d18dfb11b1849e89ecfb05aa33cddf2fd2d172a", version = "0.1.1" }
+
+base64 = "0.23.1"
+ed25519-dalek = { version = "3.0.0", default-features = false }
+# Pinned exactly: the wasm-bindgen command that post-processes the module
+# must be the same version (scripts/build-native.mjs checks).
+wasm-bindgen = "=0.2.129"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+unwrap_used = "deny"
+dbg_macro = "deny"
+todo = "deny"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /rust
+    schedule:
+      interval: weekly
+    # The verified-* crates are moved deliberately, and wasm-bindgen moves
+    # together with the command that post-processes the module; see
+    # CONTRIBUTING.md.
+    ignore:
+      - dependency-name: "verified-*"
+      - dependency-name: "wasm-bindgen"
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

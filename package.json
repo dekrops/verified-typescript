@@ -1,0 +1,63 @@
+{
+  "name": "verified-typescript",
+  "version": "0.1.0",
+  "description": "The TypeScript SDK for the Work Verification Protocol: produce and independently verify portable, signed accounts of agent work.",
+  "license": "Apache-2.0",
+  "author": "Verified AI",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dekrops/verified-typescript.git"
+  },
+  "homepage": "https://github.com/dekrops/verified-typescript#readme",
+  "bugs": "https://github.com/dekrops/verified-typescript/issues",
+  "keywords": [
+    "wvp",
+    "work-verification-protocol",
+    "agents",
+    "verification",
+    "evidence",
+    "ed25519"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./instrumentation": {
+      "types": "./dist/instrumentation/index.d.ts",
+      "default": "./dist/instrumentation/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "NOTICE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build:native": "node scripts/build-native.mjs",
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-native.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "npm run build && vitest run",
+    "check": "npm run lint && npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

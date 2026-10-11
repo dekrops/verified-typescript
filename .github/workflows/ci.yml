@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  # A run that claims conformance must not skip the corpus.
+  VERIFIED_CONFORMANCE_REQUIRED: "1"
+  WASM_BINDGEN_VERSION: "0.2.129"
+
+jobs:
+  native:
+    name: WebAssembly module
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: "1.99.0"
+          targets: wasm32-unknown-unknown
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+      - run: cargo fmt --check
+        working-directory: rust
+      - run: cargo clippy --locked --target wasm32-unknown-unknown -- -D warnings
+        working-directory: rust
+      - name: Install wasm-bindgen
+        run: |
+          if [ "$(wasm-bindgen --version 2>/dev/null)" != "wasm-bindgen $WASM_BINDGEN_VERSION" ]; then
+            cargo install wasm-bindgen-cli --version "$WASM_BINDGEN_VERSION" --locked --force
+          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      # The module is the same on every platform: it is built once, here.
+      - run: node scripts/build-native.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: native
+          path: src/native
+          if-no-files-found: error
+
+  lint:
+    name: Lint and types
+    needs: native
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: native
+          path: src/native
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+
+  test:
+    name: Tests (${{ matrix.os }}, Node ${{ matrix.node }})
+    needs: native
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: actions/download-artifact@v8
+        with:
+          name: native
+          path: src/native
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  package:
+    name: Package
+    needs: native
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: native
+          path: src/native
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm pack
+      - name: Install the tarball elsewhere and verify a package with it
+        run: |
+          mkdir "$RUNNER_TEMP/consumer"
+          cp -r examples "$RUNNER_TEMP/consumer/examples"
+          cd "$RUNNER_TEMP/consumer"
+          npm init -y >/dev/null
+          npm pkg set type=module
+          npm install "$GITHUB_WORKSPACE"/verified-typescript-*.tgz
+          node examples/standalone-verification/verify-packages.ts
+          node examples/invoice-posting/invoice-agent.ts
+      - uses: actions/upload-artifact@v7
+        with:
+          name: package
+          path: verified-typescript-*.tgz
+
+  dependencies:
+    name: Dependency and license policy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          manifest-path: rust/Cargo.toml
+          command: check
+          rust-version: "1.99.0"

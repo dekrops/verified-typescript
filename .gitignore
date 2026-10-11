@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+*.tgz
+# Generated from rust/ by `npm run build:native`.
+src/native/
+rust/target/
+.DS_Store
+.readme-check/

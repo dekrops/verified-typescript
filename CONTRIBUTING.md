@@ -28,6 +28,10 @@ VERIFIED_CONFORMANCE_REQUIRED=1 npm test
 (cd rust && cargo fmt --check && cargo clippy --locked --target wasm32-unknown-unknown -- -D warnings)
 ```
 
+After changing `rust/Cargo.lock`, regenerate the third-party notices (needs
+`cargo-about` 0.9.2): in `rust/`, run
+`cargo about generate --frozen --fail about.hbs -o ../THIRD-PARTY-LICENSES.md`.
+
 `npm test` builds `dist/` first, because the example tests run the built
 package the way a user would.
 

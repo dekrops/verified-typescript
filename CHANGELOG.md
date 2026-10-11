@@ -6,6 +6,14 @@ aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- The package now carries `THIRD-PARTY-LICENSES.md`: the licenses and notices
+  of the Rust crates the WebAssembly module links, generated from
+  `rust/Cargo.lock` and checked in CI. The 0.1.0 package lacked them.
+- `NOTICE` and the package metadata name the copyright holder as Krops GmbH,
+  as `dekrops/verified-cli` and `dekrops/wvp` do.
+
 ## [0.1.0] - 2026-10-11
 
 First developer preview.

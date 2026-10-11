@@ -23,13 +23,14 @@ jobs:
     name: WebAssembly module
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: "1.99.0"
-          targets: wasm32-unknown-unknown
-          components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # The toolchain, with the WebAssembly target, is the one
+      # rust/rust-toolchain.toml pins; rustup, preinstalled on the runners,
+      # installs it on first use.
+      - name: Install the pinned Rust toolchain
+        working-directory: rust
+        run: rustup show active-toolchain || rustup toolchain install
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
         with:
           workspaces: rust
       - run: cargo fmt --check
@@ -41,12 +42,26 @@ jobs:
           if [ "$(wasm-bindgen --version 2>/dev/null)" != "wasm-bindgen $WASM_BINDGEN_VERSION" ]; then
             cargo install wasm-bindgen-cli --version "$WASM_BINDGEN_VERSION" --locked --force
           fi
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
+      - run: cargo install cargo-about --version 0.9.2 --features cli --locked
+      # The package carries these texts. The file is generated, offline, from
+      # the crates rust/Cargo.lock names; a change of dependencies
+      # regenerates it in the same pull request.
+      - run: cargo fetch --locked
+        working-directory: rust
+      - run: cargo about generate --frozen --fail about.hbs -o "$RUNNER_TEMP/notices.md"
+        working-directory: rust
+      - name: The committed third-party notices are current
+        run: |
+          diff -u THIRD-PARTY-LICENSES.md "$RUNNER_TEMP/notices.md" || {
+            echo "::error::THIRD-PARTY-LICENSES.md is out of date: in rust/, run cargo about generate --frozen --fail about.hbs -o ../THIRD-PARTY-LICENSES.md"
+            exit 1
+          }
       # The module is the same on every platform: it is built once, here.
       - run: node scripts/build-native.mjs
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: native
           path: src/native
@@ -57,12 +72,12 @@ jobs:
     needs: native
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/download-artifact@v8
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: native
           path: src/native
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           cache: npm
@@ -80,14 +95,14 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         node: [22, 24]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: true
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: native
           path: src/native
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node }}
           cache: npm
@@ -99,18 +114,20 @@ jobs:
     needs: native
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/download-artifact@v8
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: native
           path: src/native
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           cache: npm
       - run: npm ci
       - run: npm run build
       - run: npm pack
+      - name: The tarball carries the third-party notices
+        run: tar -tzf verified-typescript-*.tgz | grep -qx "package/THIRD-PARTY-LICENSES.md"
       - name: Install the tarball elsewhere and verify a package with it
         run: |
           mkdir "$RUNNER_TEMP/consumer"
@@ -121,7 +138,7 @@ jobs:
           npm install "$GITHUB_WORKSPACE"/verified-typescript-*.tgz
           node examples/standalone-verification/verify-packages.ts
           node examples/invoice-posting/invoice-agent.ts
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: package
           path: verified-typescript-*.tgz
@@ -130,8 +147,8 @@ jobs:
     name: Dependency and license policy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: EmbarkStudios/cargo-deny-action@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: EmbarkStudios/cargo-deny-action@3c6349835b2b7b196a839186cb8b78e02f7b5f25 # v2.1.1
         with:
           manifest-path: rust/Cargo.toml
           command: check

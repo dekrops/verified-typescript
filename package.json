@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "The TypeScript SDK for the Work Verification Protocol: produce and independently verify portable, signed accounts of agent work.",
   "license": "Apache-2.0",
-  "author": "Verified AI",
+  "author": "Krops GmbH",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dekrops/verified-typescript.git"
@@ -42,6 +42,7 @@
     "dist",
     "LICENSE",
     "NOTICE",
+    "THIRD-PARTY-LICENSES.md",
     "README.md",
     "CHANGELOG.md"
   ],

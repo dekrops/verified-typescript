@@ -65,7 +65,7 @@ describe("the examples", () => {
 
   test("the README's examples run as written", () => {
     const readme = readFileSync(join(ROOT, "README.md"), "utf8");
-    const blocks = [...readme.matchAll(/```ts\n(.*?)```/gs)].map((match) => match[1] as string);
+    const blocks = [...readme.matchAll(/```ts\r?\n(.*?)```/gs)].map((match) => match[1] as string);
     expect(blocks).toHaveLength(4);
     const scratch = join(ROOT, ".readme-check");
     rmSync(scratch, { recursive: true, force: true });

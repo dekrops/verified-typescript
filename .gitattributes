@@ -1,3 +1,5 @@
 # Fixtures and canonical text are compared byte for byte: never convert line ends.
 * text=auto eol=lf
 *.json -text
+# Generated notices carry the line ends of the licence texts they quote.
+THIRD-PARTY-LICENSES.md -text

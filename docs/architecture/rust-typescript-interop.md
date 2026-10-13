@@ -109,12 +109,12 @@ file read, no fetch, no bundler plugin. The cost is size. The module is about
 
 ## Pinning and upgrades
 
-The six crates are git dependencies pinned to the commit of an upstream tag
-(`rust/Cargo.toml`, currently `v0.1.4`), locked in `rust/Cargo.lock`, built
+The seven crates are git dependencies pinned to the commit of an upstream tag
+(`rust/Cargo.toml`, currently `v0.1.5`), locked in `rust/Cargo.lock`, built
 with `--locked`. Upstream's library API follows semantic versioning from its
 first tag, and asks consumers that exchange packages to pin the same tag.
 
-To move the pin: change the five `rev` values and `UPSTREAM_REVISION` in
+To move the pin: change the seven `rev` values and `UPSTREAM_REVISION` in
 `rust/src/lib.rs`, rebuild the module, run the full suite with the corpus
 required, update the tables in `docs/protocol-compatibility.md`, and read the
 upstream pull requests in between. One pull request, nothing else in it.

@@ -8,6 +8,7 @@
       "!rust/target",
       "!src/native",
       "!examples/**/*.json",
+      "!tests/fixtures/**/*.json",
       "!package-lock.json"
     ]
   },

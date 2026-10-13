@@ -22,6 +22,15 @@ export {
 export { canonicalize, Digest, type DigestWire } from "./canonical.js";
 export { WorkContract } from "./contracts.js";
 export {
+  AuthorizationOutcome,
+  type AuthorizationReplay,
+  type BoundDerivation,
+  type DerivationReplay,
+  ReplayOutcome,
+  type RequirementBinding,
+  replayDerivation,
+} from "./derivation.js";
+export {
   AssemblyError,
   ContractError,
   LifecycleError,

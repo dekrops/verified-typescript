@@ -13,6 +13,7 @@
 //! message is a code, a line feed, and the detail. Protocol outcomes,
 //! refusals included, are returned as data.
 
+mod derivation;
 mod evidence;
 mod history;
 mod issue;
@@ -31,7 +32,7 @@ use crate::json::{digest, list, object, optional, read, text, texts};
 
 /// The revision of `dekrops/verified-cli` the verification crates are built
 /// from. Kept beside the pin in `Cargo.toml`; a test compares the two.
-const UPSTREAM_REVISION: &str = "4d41004eed165a2df65523f0d9753cbf050f306e";
+const UPSTREAM_REVISION: &str = "d9e99f54803a1b74f0f0dd53bf1815d2238b8046";
 
 /// The DER encoding of an Ed25519 `SubjectPublicKeyInfo` up to the key.
 const SPKI_PREFIX: [u8; 12] = [
@@ -268,6 +269,16 @@ pub fn read_history(relations: &[u8], records: &[u8], trust: &[u8]) -> Thrown<St
     let relations = read(relations, "relations", "MALFORMED_JSON")?;
     let records = read(records, "records", "MALFORMED_JSON")?;
     Ok(history::reading(&relations, &records, &trust)?.to_canonical_string())
+}
+
+/// Replays a recomputed authorization from its evidence, under `trust`
+/// (a draft, and not part of the protocol). Returns what was computed, or
+/// the stage at which the presented result was not reproduced.
+#[wasm_bindgen]
+pub fn replay_derivation(package: &[u8], trust: &[u8]) -> Thrown<String> {
+    let trust = report::trust(trust)?;
+    let package = read(package, "package", "MALFORMED_JSON")?;
+    Ok(derivation::replayed(&package, &trust).to_canonical_string())
 }
 
 /// Lays out the statement by which a source says that records belong to one

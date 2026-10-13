@@ -21,10 +21,22 @@ aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `workRecordReference` name the members. The statement is laid out by
   upstream's producer, which refuses a relation a reader would refuse.
 
+- `replayDerivation`: computes a presented *recomputed authorization* again
+  from its evidence, under your trust registry, and compares (a draft,
+  proposed in RFC 0005 and not part of the protocol). A replay package
+  carries a contract, signed statements and the result a first verifier
+  arrived at; nothing presented is believed. A `DerivationReplay` reports
+  whether the result was reproduced, each authorization's outcome with
+  Cedar's own answer kept apart from it, the contract's decision, and which
+  requirements depend on which derivations. The rules are upstream's
+  `verified-derivation` crate, which links the Cedar policy engine: the
+  WebAssembly module grows from about 0.5 MB to 3.7 MB, and the engine's
+  time and memory are not bounded.
+
 ### Changed
 
-- The WebAssembly module is built on `dekrops/verified-cli` `v0.1.4`
-  (`4d41004`), and the conformance corpus is `dekrops/wvp` at `46ccd1d`.
+- The WebAssembly module is built on `dekrops/verified-cli` `v0.1.5`
+  (`d9e99f5`), and the conformance corpus is `dekrops/wvp` at `46ccd1d`.
   Both upstream releases since `v0.1.1` only added to the library API;
   nothing bound before changes.
 

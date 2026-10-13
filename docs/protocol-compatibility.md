@@ -9,7 +9,7 @@ does not do.
 | | |
 | --- | --- |
 | SDK | `verified-typescript` 0.1.0, a developer preview |
-| Verification crates | [`dekrops/verified-cli`](https://github.com/dekrops/verified-cli) `v0.1.4`, commit `4d41004eed165a2df65523f0d9753cbf050f306e`: `verified-history`, `verified-canonical`, `verified-protocol`, `verified-contract`, `verified-verifier`, `verified-work-unit` |
+| Verification crates | [`dekrops/verified-cli`](https://github.com/dekrops/verified-cli) `v0.1.5`, commit `d9e99f54803a1b74f0f0dd53bf1815d2238b8046`: `verified-derivation`, `verified-history`, `verified-canonical`, `verified-protocol`, `verified-contract`, `verified-verifier`, `verified-work-unit` |
 | Conformance corpus | [`dekrops/wvp`](https://github.com/dekrops/wvp) at `46ccd1d7c34d3a92e13a59f9235120f8d37395d7`, as the submodule `conformance/wvp` |
 | Binding | One WebAssembly module, built with `wasm-bindgen` 0.2.129 |
 | Runtime | Node.js 22 or later |
@@ -31,6 +31,12 @@ does not do.
 Also, outside packages: evidence statements (sign, read, authenticate), Work
 Contract Language 1 (read, and evaluate through package assembly), work-unit
 identity v1 (identity, nullifier, key commitment).
+
+Outside the protocol, as an experiment: replaying a recomputed
+authorization (`replayDerivation`). It is proposed in RFC 0005 of
+`dekrops/wvp`, a Draft that no specification defines; there is no conformance
+corpus for it, and it may change or be removed. Upstream's replayer decides
+everything; four of its example packages are replayed in this SDK's tests.
 
 And, as a draft: work relation v1, reading only (`readHistory`). Given
 relations and the records they name, it reports each relation as checked,

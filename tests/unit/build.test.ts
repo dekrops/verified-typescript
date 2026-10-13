@@ -18,6 +18,7 @@ test("one upstream revision is pinned everywhere", () => {
   expect(dependencies.map((match) => match[1]).sort()).toEqual([
     "verified-canonical",
     "verified-contract",
+    "verified-derivation",
     "verified-history",
     "verified-protocol",
     "verified-verifier",

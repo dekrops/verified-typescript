@@ -83,10 +83,13 @@ entry points:
 | `verified-typescript/instrumentation` | `WorkSession`, `verifiedTool`, traces | Runtimes with `node:async_hooks` |
 | `verified-typescript/node` | File helpers | Runtimes with `node:fs` |
 
-Tested on Node.js 22 and 24. Deno, Bun and browsers are expected to work and
-are not tested, so they are not claimed. Runtimes that forbid compiling
-WebAssembly from bytes at run time, Cloudflare Workers among them, cannot load
-the module as it is packaged.
+Tested on Node.js 22 and 24. In browsers, run it in a module Web Worker: the
+module is compiled there synchronously, without blocking the page. It has been
+verified in Chrome in a Vite-built worker. A page's Content Security Policy must
+allow WebAssembly compilation, so add `'wasm-unsafe-eval'` to `script-src`; no
+broader permission is needed. Deno and Bun are expected to work, and are not
+tested. Runtimes that forbid compiling WebAssembly from bytes at run time,
+Cloudflare Workers among them, cannot load the module as it is packaged.
 
 ## 1. How do I independently verify a package?
 

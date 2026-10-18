@@ -6,6 +6,8 @@ aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-18
+
 ### Added
 
 - `readHistory`: reads work relations (work relation v1, a draft) against
@@ -35,6 +37,9 @@ aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- The version is 0.2.0. The 0.1.0 package on npm embeds `verified-cli`
+  `v0.1.1`; the version string now changes when the embedded verifier does, and
+  `buildInfo().upstreamRevision` names it.
 - The WebAssembly module is built on `dekrops/verified-cli` `v0.1.5`
   (`d9e99f5`), and the conformance corpus is `dekrops/wvp` at `46ccd1d`.
   Both upstream releases since `v0.1.1` only added to the library API;

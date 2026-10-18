@@ -128,12 +128,6 @@ jobs:
       - run: npm pack
       - name: The tarball carries the third-party notices
         run: tar -tzf verified-typescript-*.tgz | grep -qx "package/THIRD-PARTY-LICENSES.md"
-      # The tarball a consumer pins (by its sha512), built from this commit in CI.
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: package
-          path: verified-typescript-*.tgz
-          if-no-files-found: error
       - name: Install the tarball elsewhere and verify a package with it
         run: |
           mkdir "$RUNNER_TEMP/consumer"
